@@ -18,7 +18,11 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     
     var favoritePlaceList:[Place] = DataManager.sharedInstance.listFavorites()
     
-    weak var delegate: PlacesFavoritesDelegate?
+    weak var delegate: PlacesFavoritesDelegate!
+    
+    public func initDelegate(withDelegate delegate: PlacesFavoritesDelegate?){
+        self.delegate = delegate
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,9 +52,18 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         let favoritePlaceList:[Place] = DataManager.sharedInstance.listFavorites()
         delegate?.favoritePlace(name: favoritePlaceList[indexPath.row].title!)
         tableView.deselectRow(at: indexPath, animated: true)
-        self.closeButton(tableView)
+        performSegue(withIdentifier: "backToMapView", sender: self)
+    }
+    
+    func prepareForSegue(segue: UIStoryboardSegue?, sender: AnyObject?) {
+        if segue!.identifier == "backToMapView" {
+            let viewController:ViewController = segue!.destination as! ViewController
+            self.delegate = (viewController as! PlacesFavoritesDelegate)
+        }
+        
     }
 }
+
 
 protocol PlacesFavoritesDelegate: class {
   func favoritePlace(name: String) -> Void

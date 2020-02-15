@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class MapViewController: UIViewController {
+class MapViewController: UIViewController{
 
 
     @IBOutlet weak var mapView: MKMapView!
@@ -23,12 +23,10 @@ class MapViewController: UIViewController {
             .object(forKey: "favPlace") as! [String]
         if favPlaceList.firstIndex(of: Name.text!)==nil {
             starButton.setImage(UIImage(systemName:"star.fill"), for: .normal)
-                print("map view try to save Chicago")
                 DataManager.sharedInstance.saveFavorites(Name.text!)
         }
         else{
             starButton.setImage(UIImage(systemName:"star"), for: .normal)
-            print("map view try to delete Chicago")
             DataManager.sharedInstance.deleteFavorites(Name.text!)
         }
     }
@@ -42,6 +40,7 @@ class MapViewController: UIViewController {
         Name.contentMode = .scaleToFill
         Description.contentMode = .scaleToFill
         Description.numberOfLines  = 0
+//        FavoritesViewController.delegate = self
         DataManager.sharedInstance.loadAnnotationFromPlist(filename: "Data")
         addAnnotations()
         setInitialLocation()
@@ -70,25 +69,12 @@ class MapViewController: UIViewController {
             mapView.addAnnotation(place)
         }
     }
+    
+    
+    
 }
 
-extension MapViewController : MKMapViewDelegate, PlacesFavoritesDelegate{
-    
-    func favoritePlace(name: String) {
-        // Update the map view based on the favorite
-        // place that was passed in
-        let favPlace = DataManager.sharedInstance.defaultMemory.object(forKey: name) as! Place
-        Name.text = favPlace.title!
-        Description.text = favPlace.subtitle!
-        let favPlaceList = DataManager.sharedInstance.defaultMemory
-            .object(forKey: "favPlace") as! [String]
-        if favPlaceList.firstIndex(of: Name.text!)==nil {
-            starButton.setImage(UIImage(systemName:"star.fill"), for: .normal)
-        }else{
-            starButton.setImage(UIImage(systemName:"star"), for: .normal)
-        }
-        mapView.setRegion(DataManager.sharedInstance.getCoordinate(name: name), animated: true)
-    }
+extension MapViewController : MKMapViewDelegate{
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         
@@ -133,4 +119,30 @@ extension MapViewController : MKMapViewDelegate, PlacesFavoritesDelegate{
         }
     }
     
+}
+
+extension MapViewController: PlacesFavoritesDelegate {
+  func favoritePlace(name: String) {
+      // Update the map view based on the favorite
+      // place that was passed in
+      let favPlace = DataManager.sharedInstance.defaultMemory.object(forKey: name) as! Place
+      Name.text = favPlace.title!
+      Description.text = favPlace.subtitle!
+      let favPlaceList = DataManager.sharedInstance.defaultMemory
+          .object(forKey: "favPlace") as! [String]
+      if favPlaceList.firstIndex(of: Name.text!)==nil {
+          starButton.setImage(UIImage(systemName:"star.fill"), for: .normal)
+      }else{
+          starButton.setImage(UIImage(systemName:"star"), for: .normal)
+      }
+      mapView.setRegion(DataManager.sharedInstance.getCoordinate(name: name), animated: true)
+  }
+    
+ func prepareForSegue(segue: UIStoryboardSegue?, sender: AnyObject?) {
+     if segue!.identifier == "backToMapView" {
+         let viewController:ViewController = segue!.destination as! ViewController
+        sender?.delegate = self as! PlacesFavoritesDelegate
+     }
+     
+ }
 }
