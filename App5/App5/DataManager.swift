@@ -52,7 +52,6 @@ public class DataManager {
     }
     
     func saveFavorites(_ name: String) -> Void{
-        print("data manager trying to save ", name)
         var favPlaceList: [String] = defaultMemory.object(forKey: "favPlace") as! [String]
         if favPlaceList.firstIndex(of: name) == nil {
             favPlaceList.append(name)
@@ -61,10 +60,8 @@ public class DataManager {
     }
     
     func deleteFavorites(_ name: String) -> Void {
-        print("data manager trying to delete ", name)
         var favPlaceList: [String] = defaultMemory.object(forKey: "favPlace") as! [String]
         if let index = favPlaceList.firstIndex(of: name) {
-            print("to delete, fing chicago in list")
             favPlaceList.remove(at: index)
         }
         defaultMemory.set(favPlaceList, forKey: "favPlace")
