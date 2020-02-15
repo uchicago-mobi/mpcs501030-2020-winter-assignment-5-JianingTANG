@@ -12,6 +12,7 @@ import MapKit
 class MapViewController: UIViewController{
 
 
+    @IBOutlet weak var hudView: UIView!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var Name: UILabel!
     @IBOutlet weak var Description: UILabel!
@@ -69,8 +70,19 @@ class MapViewController: UIViewController{
         }
     }
     
-    
-    
+    func reloadView(_ name: String){
+        let favPlace = DataManager.sharedInstance.placeAnnotations[name]!
+        Name.text = favPlace.title!
+        Description.text = favPlace.subtitle!
+        let favPlaceList = DataManager.sharedInstance.defaultMemory
+          .object(forKey: "favPlace") as! [String]
+        if favPlaceList.firstIndex(of: Name.text!)==nil {
+            starButton.setImage(UIImage(systemName:"star.fill"), for: .normal)
+        }else{
+            starButton.setImage(UIImage(systemName:"star"), for: .normal)
+        }
+        mapView.setRegion(DataManager.sharedInstance.getCoordinate(name: name), animated: true)
+    }
 }
 
 extension MapViewController : MKMapViewDelegate{
@@ -116,6 +128,7 @@ extension MapViewController : MKMapViewDelegate{
             print("map view try to delete Chicago")
             DataManager.sharedInstance.deleteFavorites(Name.text!)
         }
+        mapView.setRegion(DataManager.sharedInstance.getCoordinate(name: Name.text!), animated: true)
     }
     
 }
@@ -123,20 +136,7 @@ extension MapViewController : MKMapViewDelegate{
 extension MapViewController: PlacesFavoritesDelegate {
   
     func favoritePlace(name: String) {
-      print("name is ", name)
-      let favPlace = DataManager.sharedInstance.placeAnnotations[name]!
-      Name.text = favPlace.title!
-      Description.text = favPlace.subtitle!
-      print("actually here ", name)
-      let favPlaceList = DataManager.sharedInstance.defaultMemory
-          .object(forKey: "favPlace") as! [String]
-      if favPlaceList.firstIndex(of: Name.text!)==nil {
-          starButton.setImage(UIImage(systemName:"star.fill"), for: .normal)
-        
-      }else{
-          starButton.setImage(UIImage(systemName:"star"), for: .normal)
-      }
-      mapView.setRegion(DataManager.sharedInstance.getCoordinate(name: name), animated: true)
+        self.reloadView(name)
   }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

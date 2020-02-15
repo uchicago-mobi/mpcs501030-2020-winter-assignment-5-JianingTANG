@@ -83,7 +83,7 @@ public class DataManager {
         //init(center: CLLocationCoordinate2D, span: MKCoordinateSpan)
         let place = placeAnnotations[placeName]
         let center = place!.coordinate
-        let span = MKCoordinateSpan(latitudeDelta: 0, longitudeDelta: 0)
+        let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         return MKCoordinateRegion(center: center, span: span)
         
     }

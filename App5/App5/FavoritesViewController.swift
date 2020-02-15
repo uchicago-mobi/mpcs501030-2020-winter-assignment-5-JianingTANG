@@ -50,12 +50,9 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let favoritePlaceList:[Place] = DataManager.sharedInstance.listFavorites()
-        if delegate == nil{
-            print("still nil")
-        }
         delegate?.favoritePlace(name: favoritePlaceList[indexPath.row].title!)
         tableView.deselectRow(at: indexPath, animated: true)
-        performSegue(withIdentifier: "backToMapView", sender: self)
+        self.dismiss(animated: true, completion: nil)
     }
 }
 
