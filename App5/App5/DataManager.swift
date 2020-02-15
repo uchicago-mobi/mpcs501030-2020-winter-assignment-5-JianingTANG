@@ -45,40 +45,44 @@ public class DataManager {
             placeAnnotations[name] = placeAnnotation
         }
         
-        
+        if defaultMemory.object(forKey: "favPlace") == nil{
+            let favPlaceList : [String] = []
+            defaultMemory.set(favPlaceList, forKey: "favPlace")
+        }        
     }
     
     func saveFavorites(_ name: String) -> Void{
-        let place: Place = placeAnnotations[name]!
-        print("trying to save ", place.title!)
-//        if favPlaceNames.firstIndex(of: name) == nil {
-//            print("default")
-//            defaultMemory.set(place, forKey: name)
-//            print("fav list")
-            favPlaceNames.append(name)
-//        }
-    }
-    
-    func deleteFavorites(_ name: String) -> Void {
-        print("trying to delete ", name)
-//        defaultMemory.removeObject(forKey: name)
-        if let index = favPlaceNames.firstIndex(of: name) {
-            favPlaceNames.remove(at: index)
+        print("data manager trying to save ", name)
+        var favPlaceList: [String] = defaultMemory.object(forKey: "favPlace") as! [String]
+        if favPlaceList.firstIndex(of: name) == nil {
+            favPlaceList.append(name)
+            defaultMemory.set(favPlaceList, forKey: "favPlace")
         }
     }
     
+    func deleteFavorites(_ name: String) -> Void {
+        print("data manager trying to delete ", name)
+        var favPlaceList: [String] = defaultMemory.object(forKey: "favPlace") as! [String]
+        if let index = favPlaceList.firstIndex(of: name) {
+            print("to delete, fing chicago in list")
+            favPlaceList.remove(at: index)
+        }
+        defaultMemory.set(favPlaceList, forKey: "favPlace")
+    }
+    
     func listFavorites() ->[Place]{
-        var userFavoritePlaceList: [Place] = []
-        for key in favPlaceNames{
-            userFavoritePlaceList.append(defaultMemory.object(forKey: key) as! Place)
+        var userFavoritePlaceList : [Place] = []
+        let favPlaceList: [String] = defaultMemory.object(forKey: "favPlace") as! [String]
+        for name in favPlaceList{
+            userFavoritePlaceList.append(placeAnnotations[name]!)
         }
         return userFavoritePlaceList
     }
     
     func getCoordinate(name placeName: String) -> MKCoordinateRegion {
         //init(center: CLLocationCoordinate2D, span: MKCoordinateSpan)
-        let place = defaultMemory.object(forKey: placeName) as! Place
-        let center = place.coordinate
+        let place = placeAnnotations[placeName]
+        let center = place!.coordinate
         let span = MKCoordinateSpan(latitudeDelta: 0, longitudeDelta: 0)
         return MKCoordinateRegion(center: center, span: span)
         

@@ -32,19 +32,23 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let favoritePlaceList:[Place] = DataManager.sharedInstance.listFavorites()
         let cell = tableView.dequeueReusableCell(withIdentifier: "favorite")!
         cell.textLabel!.text = favoritePlaceList[indexPath.row].title
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let favoritePlaceList:[Place] = DataManager.sharedInstance.listFavorites()
         return favoritePlaceList.count
     }
 
 
-    private func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath){
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let favoritePlaceList:[Place] = DataManager.sharedInstance.listFavorites()
         delegate?.favoritePlace(name: favoritePlaceList[indexPath.row].title!)
         tableView.deselectRow(at: indexPath, animated: true)
+        self.closeButton(tableView)
     }
 }
 

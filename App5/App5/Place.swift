@@ -19,12 +19,4 @@ class Place: NSObject, MKAnnotation {
         self.subtitle = subtitle
         self.coordinate = coordinate
     }
-    
-//    func getCoordinate(){
-//        return
-//    }
-    
-//    var getDescription: String?{
-//        return self.longDescription
-//    }
 }
