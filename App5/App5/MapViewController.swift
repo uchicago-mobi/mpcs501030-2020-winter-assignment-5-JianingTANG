@@ -40,7 +40,6 @@ class MapViewController: UIViewController{
         Name.contentMode = .scaleToFill
         Description.contentMode = .scaleToFill
         Description.numberOfLines  = 0
-//        FavoritesViewController.delegate = self
         DataManager.sharedInstance.loadAnnotationFromPlist(filename: "Data")
         addAnnotations()
         setInitialLocation()
@@ -122,27 +121,28 @@ extension MapViewController : MKMapViewDelegate{
 }
 
 extension MapViewController: PlacesFavoritesDelegate {
-  func favoritePlace(name: String) {
-      // Update the map view based on the favorite
-      // place that was passed in
-      let favPlace = DataManager.sharedInstance.defaultMemory.object(forKey: name) as! Place
+  
+    func favoritePlace(name: String) {
+      print("name is ", name)
+      let favPlace = DataManager.sharedInstance.placeAnnotations[name]!
       Name.text = favPlace.title!
       Description.text = favPlace.subtitle!
+      print("actually here ", name)
       let favPlaceList = DataManager.sharedInstance.defaultMemory
           .object(forKey: "favPlace") as! [String]
       if favPlaceList.firstIndex(of: Name.text!)==nil {
           starButton.setImage(UIImage(systemName:"star.fill"), for: .normal)
+        
       }else{
           starButton.setImage(UIImage(systemName:"star"), for: .normal)
       }
       mapView.setRegion(DataManager.sharedInstance.getCoordinate(name: name), animated: true)
   }
     
- func prepareForSegue(segue: UIStoryboardSegue?, sender: AnyObject?) {
-     if segue!.identifier == "backToMapView" {
-         let viewController:ViewController = segue!.destination as! ViewController
-        sender?.delegate = self as! PlacesFavoritesDelegate
-     }
-     
- }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let receiver = segue.destination as? FavoritesViewController{
+            receiver.delegate = self
+        }
+    }
+    
 }
